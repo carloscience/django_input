@@ -1,0 +1,24 @@
+input[type="text"] {
+  width: 300px;
+}
+
+article {
+  margin-bottom: 10px;
+}
+
+h2 {
+  line-height: 15px;
+}
+
+ul {
+  list-style: none;
+  margin-top: -10px;
+}
+
+.stat-comparison {
+  margin-top: 20px;
+}
+ 
+.stat-comparison span {
+  font-weight: bold;
+}   

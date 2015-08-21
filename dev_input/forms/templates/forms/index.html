@@ -1,33 +1,13 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
-    <!--<link rel="stylesheet" href="">-->
-    <style>
-    input[type="text"] {
-      width: 300px;
-    }
-    article {
-      margin-bottom: 10px;
-    }
-    h2 {
-      line-height: 15px;
-    }
-    ul {
-      list-style: none;
-      margin-top: -10px;
-    }
-    .stat-comparison {
-      margin-top: 20px;
-    } 
-    .stat-comparison span {
-      font-weight: bold;
-    }   
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'forms/style.css' %}" />
+    <script src="{% static 'forms/bower_components/angular/angular.min.js' %}"></script>
     <script>
     angular.module('GithubInput', [])
     .controller('UrlController', ['$scope', '$http', function($scope, $http) {
@@ -77,6 +57,7 @@
         var userIndex2 = url2.lastIndexOf("/");
         var userRepo2 = url2.substr(gh.length, userIndex2);
 
+        // query api
         Promise.all([
           $http({method: 'GET', url: apiUrl + userRepo1}), 
           $http({method: 'GET', url: apiUrl + userRepo2})
