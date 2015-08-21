@@ -47,12 +47,39 @@
       }];
 
       $scope.showContent = false;
+      $scope.showSummary = true;
 
       $scope.getUrl = function() {
 
+        // format urls and handle errors
+        var url1 = $scope.repos[0].url;
+        var url2 = $scope.repos[1].url;
+        var gh = "https://github.com/";
+        var apiUrl = "https://api.github.com/repos/";
+        var ghIndex1 = url1.indexOf(gh);
+        var ghIndex2 = url2.indexOf(gh);
+        
+        if ((ghIndex1 < 0) || (ghIndex2 < 0)) {
+          alert("Please enter valid github urls");
+          return false;
+        }
+        
+        if (url1.length === (url1.lastIndexOf("/") + 1)) {
+          url1 = url1.substr(0, url1.lastIndexOf("/"));
+        }
+
+        if (url2.length === (url2.lastIndexOf("/") + 1)) {
+          url2 = url2.substr(0, url2.lastIndexOf("/"));
+        }
+        
+        var userIndex1 = url1.lastIndexOf("/");
+        var userRepo1 = url1.substr(gh.length, userIndex1);
+        var userIndex2 = url2.lastIndexOf("/");
+        var userRepo2 = url2.substr(gh.length, userIndex2);
+
         Promise.all([
-          $http({method: 'GET', url: $scope.repos[0].url}), 
-          $http({method: 'GET', url: $scope.repos[1].url})
+          $http({method: 'GET', url: apiUrl + userRepo1}), 
+          $http({method: 'GET', url: apiUrl + userRepo2})
         ]).then(function(responses) {
           if (responses[0] && responses[1]) {
             setTimeout(function() {
@@ -66,13 +93,21 @@
               $scope.repos[1].forks_count = responses[1].data.forks_count;
 
               $scope.sorted = [responses[0].data, responses[1].data].sort(function(a, b) {
-                return a.stargazers_count - b.stargazers_count;
+                if (a.stargazers_count == b.stargazers_count) {
+                  $scope.showSummary = false;
+                } else {
+                  $scope.showSummary = true;
+                  return a.stargazers_count - b.stargazers_count;
+                };
               });
               
               $scope.showContent = true;
               $scope.$apply();
             }, 1000);
-          }
+          } 
+        }, function() {
+          alert("Please enter valid github urls");
+          return false;
         });
       };
     }]);
@@ -98,8 +133,8 @@
             <li>Forks: <span ng-bind="repo.forks_count"></span></li>
           </ul>
         </div>
-        <div class="stat-comparison">
-          <p>Most popular github repo is <span ng-bind="sorted[1].name"></span> with <span ng-bind="sorted[1].stargazers_count"></span> stars, leading <span ng-bind="sorted[0].name"></span> by <span ng-bind="sorted[1].stargazers_count - sorted[0].stargazers_count"></span> stars</h3>
+        <div class="stat-comparison" ng-show="showSummary">
+          <p>Most popular github repo is <span ng-bind="sorted[1].name"></span> with <span ng-bind="sorted[1].stargazers_count"></span> stars, leading <span ng-bind="sorted[0].name"></span> by <span ng-bind="sorted[1].stargazers_count - sorted[0].stargazers_count"></span> stars</p>
         </div>
       </div>
     </section>
